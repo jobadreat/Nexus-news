@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Premium | Global News Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #a855f7;
+            --dark: #0f172a;
+            --glass: rgba(255, 255, 255, 0.95);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background-attachment: fixed;
+            margin: 0;
+            display: flex;
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: -10%; left: -10%;
+            width: 400px; height: 400px;
+            background: var(--primary);
+            filter: blur(150px);
+            opacity: 0.2;
+            z-index: -1;
+        }
+
+        /* Sidebar Navigation */
+        nav {
+            width: 280px;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            height: 100vh;
+            position: fixed;
+            padding: 30px;
+            border-right: 1px solid rgba(255,255,255,0.1);
+            z-index: 10;
+        }
+
+        nav h2 { 
+            font-size: 28px; 
+            font-weight: 700;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 40px;
+        }
+
+        .menu-item {
+            display: block; width: 100%; padding: 15px;
+            margin-bottom: 10px; border: none; border-radius: 12px;
+            background: transparent; color: #94a3b8;
+            text-align: left; cursor: pointer; transition: 0.3s;
+            font-size: 16px; font-weight: 500;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(99, 102, 241, 0.1);
+            color: #fff;
+        }
+
+        .menu-item.active { background: var(--primary); }
+
+        /* Main Content Area */
+        main { margin-left: 310px; padding: 50px; width: calc(100% - 310px); }
+
+        .header-section {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 50px;
+        }
+
+        #searchInput {
+            padding: 15px 25px; width: 350px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 30px; color: white; outline: none;
+        }
+
+        /* News Cards */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--glass);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: 0.4s;
+            display: flex; flex-direction: column;
+            color: #1e293b;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .card-img { width: 100%; height: 200px; object-fit: cover; background: #ddd; }
+        .card-body { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .category-tag { font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 10px; }
+        .card h3 { font-size: 20px; margin: 0 0 15px 0; color: #0f172a; }
+        .card p { font-size: 14px; color: #64748b; line-height: 1.6; margin-bottom: 20px; }
+        .btn { margin-top: auto; padding: 12px; background: var(--primary); color: white; text-decoration: none; text-align: center; border-radius: 12px; font-weight: 600; border: none; cursor: pointer; }
+
+        /* Feedback Trigger Button */
+        .feedback-trigger {
+            position: fixed; bottom: 30px; right: 30px;
+            background: var(--primary); color: white; border: none;
+            padding: 15px 25px; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); font-weight: 600;
+            z-index: 100; transition: 0.3s;
+        }
+
+        .feedback-trigger:hover { transform: scale(1.05); background: var(--secondary); }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(8px);
+            display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+
+        .feedback-card {
+            background: white; padding: 40px; border-radius: 24px; width: 350px; color: var(--dark); text-align: center;
+        }
+
+        .feedback-card textarea { width: 100%; height: 100px; margin: 15px 0; padding: 10px; border-radius: 8px; border: 1px solid #ddd; font-family: inherit; resize: none; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <h2>Nexus Premium</h2>
+        <button class="menu-item active" onclick="filterNews('all', this)">🏠 All Headlines</button>
+        <button class="menu-item" onclick="filterNews('Sports', this)">🏀 Sports</button>
+        <button class="menu-item" onclick="filterNews('Tech', this)">💻 Technology</button>
+        <button class="menu-item" onclick="filterNews('Business', this)">📈 Business</button>
+        <button class="menu-item" onclick="filterNews('World', this)">🌍 World News</button>
+    </nav>
+
+    <main>
+        <div class="header-section">
+            <h1 id="currentCategory">Global Feed</h1>
+            <input type="text" id="searchInput" placeholder="Search news..." onkeyup="searchNews()">
+        </div>
+        <div class="news-grid" id="newsFeed"></div>
+    </main>
+
+    <button class="feedback-trigger" onclick="toggleModal(true)">💬 Feedback</button>
+    
+    <div class="modal-overlay" id="feedbackModal">
+        <div class="feedback-card">
+            <h3>How are we doing?</h3>
+            <p style="font-size: 14px; color: #64748b;">Help us improve Nexus Premium.</p>
+            <textarea id="feedbackText" placeholder="Write your feedback here..."></textarea>
+            <button class="btn" style="width:100%;" onclick="sendFeedback()">Submit Feedback</button>
+            <p onclick="toggleModal(false)" style="margin-top:15px; cursor:pointer; color:#94a3b8; font-size: 13px;">Maybe Later</p>
+        </div>
+    </div>
+
+    <script>
+        const newsData = [
+            { category: 'Sports', title: 'NBA Playoff Race Intensifies', desc: 'Teams battle for the final seeding spots as the regular season winds down.', url: 'https://www.nba.com', img: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=500' },
+            { category: 'Sports', title: 'Formula 1 Technical Changes', desc: 'New aerodynamic regulations are shaking up the grid this weekend.', url: 'https://www.formula1.com', img: 'https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=500' },
+            { category: 'Tech', title: 'The Rise of Generative AI', desc: 'How large language models are changing software development forever.', url: 'https://www.wired.com', img: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=500' },
+            { category: 'Business', title: 'Interest Rates Hold Steady', desc: 'Central banks announce decisions on inflation management for Q3.', url: 'https://www.wsj.com', img: 'https://images.unsplash.com/photo-1611974714014-48321cefd48f?w=500' },
+            { category: 'World', title: 'Solar Power Records Broken', desc: 'Renewable energy output hit an all-time high this summer.', url: 'https://www.aljazeera.com', img: 'https://images.unsplash.com/photo-1508514177221-188b1cf16e9d?w=500' }
+        ];
+
+        const feed = document.getElementById('newsFeed');
+        const fallbackImg = "https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=500";
+
+        function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
+
+        function displayNews(data) {
+            feed.innerHTML = '';
+            data.forEach(item => {
+                feed.innerHTML += `
+                    <div class="card">
+                        <img src="${item.img}" class="card-img" alt="news" onerror="this.src='${fallbackImg}'">
+                        <div class="card-body">
+                            <span class="category-tag">${item.category}</span>
+                            <h3>${item.title}</h3>
+                            <p>${item.desc}</p>
+                            <a href="${item.url}" target="_blank" class="btn">Read Source</a>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function filterNews(cat, el) {
+            document.querySelectorAll('.menu-item').forEach(btn => btn.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('currentCategory').innerText = cat === 'all' ? 'Global Feed' : cat + ' News';
+            const filtered = cat === 'all' ? newsData : newsData.filter(i => i.category === cat);
+            displayNews(filtered);
+        }
+
+        function searchNews() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = newsData.filter(i => i.title.toLowerCase().includes(term));
+            displayNews(filtered);
+        }
+
+        // Feedback Functions
+        function toggleModal(show) { document.getElementById('feedbackModal').style.display = show ? 'flex' : 'none'; }
+        
+        function sendFeedback() {
+            const val = document.getElementById('feedbackText').value;
+            if(!val) return alert("Abeg, enter some text!");
+            alert("Thank you! Feedback received.");
+            toggleModal(false);
+            document.getElementById('feedbackText').value = "";
+        }
+
+        // Initial Load & 10 Minute Shuffle
+        displayNews(shuffle([...newsData]));
+        setInterval(() => displayNews(shuffle([...newsData])), 600000);
+
+    </script>
+</body>
+</html>
